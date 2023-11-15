@@ -13,7 +13,7 @@ router.get("/teachers/info", viewTeacher) // muestra las materias que cada profe
 router.get("/students/info", viewStudent)
 router.get("/teachers/grades",viewGrade)
 // ---------------- PRUEBA ------------------------------//
-router.put('/students/registerGrade',registerGrade)
+router.put('/teacher/registerGrade/:studentid',registerGrade)
 //..........................................................//
 export default router
 

@@ -66,35 +66,33 @@ export async function viewGrade (req,res){
 
 // ------------------------------------- PRUEBA -------------------------------------//
 //4. Registrar notas
-export async function registerGrade(req,res){
-    const studentsData = req.body;
-
-    // Iterar sobre los datos de los estudiantes y actualizar la base de datos
-    studentsData.forEach(async (studentData) => {
-      const query = `
-        UPDATE students
-        SET first_period = $1, second_period = $2, third_period = $3
-        WHERE user_studentID = $4 AND courseID = $5`;
-  
-      const values = [
-        studentData.first_period,
-        studentData.second_period,
-        studentData.third_period,
-        studentData.user_studentID,
-        studentData.courseID,
-      ];
-  
-      try {
-        const result = await pool.query(query, values);
-        console.log('Actualizado:', result.rows);
+export async function registerGrade (req,res){
+    const studentId = req.params.studentid;
+    const { first_period, second_period, third_period } = req.body;
+    try {
+        // Actualizar las calificaciones en la base de datos
+        const result = await db.none(`
+          UPDATE students
+          SET first_period = $1, second_period = $2, third_period = $3
+          WHERE studentid = $4
+        `, [first_period, second_period, third_period, studentId]);
+    
+        if (result) {
+          res.json({ message: `Calificaciones actualizadas para el estudiante con ID ${studentId}` });
+        } else {
+          res.status(404).json({ error: 'Estudiante no encontrado' });
+        }
       } catch (error) {
-        console.error('Error al actualizar:', error);
+        console.error('Error al actualizar las calificaciones:', error);
+        res.status(500).json({ error: 'Error interno del servidor' });
       }
-    });
   
-    res.json({ success: true, message: 'Datos actualizados exitosamente' });
-  };
+    // Ejemplo de respuesta
+    res.json({ message: `Calificaciones actualizadas para el estudiante con ID ${studentId}` });
+  }
+
   
+      
   
 //------------------------------------------------------------------------------------//
 
